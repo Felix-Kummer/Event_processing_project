@@ -235,7 +235,7 @@ def create_q4_ld(name):
 def create_q4_rd(name):
 
     # init all nodes
-    root = RootNode(f"./{name}__rd_results.csv")  # this mode is only used as a reference to the final buffer
+    root = RootNode(f"./{name}_q4_rd_results.csv")  # this mode is only used as a reference to the final buffer
 
     seq2 = SequenceNode(parent=root, is_right_child=True, condition=True)  # right child to invoke root node evaluation
     seq1 = SequenceNode(parent=seq2, is_right_child=True)
