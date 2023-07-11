@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import time
 import csv
+import random
 
 # Base class for all tree nodes
 class TreeNode:
@@ -120,6 +121,7 @@ class SequenceNode(TreeNode):
                         self.buffer.append(merged_event)
                 else:
                     break
+            self.left_child_buffer = left_buf  # remove out-of-timeframe events from buffers these will also be out-of-timeframe for future buffers
 
         # empty right buffer
         self.right_child_buffer.clear()
@@ -303,37 +305,7 @@ def tree_based_eval(tree_plan, event_stream, window_size=200, batch_size=1):
                     leaf.eval()
 
 
-# Placeholder function to generate event stream for testing purposes
-def get_placeholder_stream():
-    return [
-        {
-            'start_timestamp': 1,
-            'event': 'IBM',
-            'price' : 2,
-            'end_timestamp': 1
-        },
-        {
-            'start_timestamp': 2,
-            'event': 'Sun',
-            'price': 1,
-            'end_timestamp': 2
-        },
-        {
-            'start_timestamp': 5,
-            'event': 'Oracle',
-            'price': 1,
-            'end_timestamp': 5
-        },
-        {
-            'start_timestamp': 5,
-            'event': 'Oracle',
-            'price': 1,
-            'end_timestamp': 5
-        },
-    ]
 
-
-import random
 
 def gen_input_stream(events, prices, event_rates, length):
     input_stream = []
@@ -374,16 +346,16 @@ def rate_experiments(batch_size=1):
             name = f"batch_{batch_size}_rate_experiment_batch_{batch_size}_{rates['IBM']}_{rates['Sun']}_{rates['Oracle']}_trial{i}"
 
             q5_rd_plan = create_q5_rd(name)
-            tree_based_eval(q5_rd_plan, inpt, batch_size)
+            tree_based_eval(q5_rd_plan, inpt, batch_size=batch_size)
 
             q5_ld_plan = create_q5_ld(name)
-            tree_based_eval(q5_ld_plan, inpt, batch_size)
+            tree_based_eval(q5_ld_plan, inpt, batch_size=batch_size)
 
             q4_rd_plan = create_q4_rd(name)
-            tree_based_eval(q4_rd_plan, inpt, batch_size)
+            tree_based_eval(q4_rd_plan, inpt, batch_size=batch_size)
 
             q4_ld_plan = create_q4_ld(name)
-            tree_based_eval(q4_ld_plan, inpt, batch_size)
+            tree_based_eval(q4_ld_plan, inpt, batch_size=batch_size)
 
 def selectivity_experiments(batch_size=1):
     length = 100_000
@@ -399,22 +371,24 @@ def selectivity_experiments(batch_size=1):
             name = f"batch_{batch_size}_selectivity_experiment_{sel}_trial{i}"
 
             q5_rd_plan = create_q5_rd(name)
-            tree_based_eval(q5_rd_plan, inpt, batch_size)
+            tree_based_eval(q5_rd_plan, inpt, batch_size=batch_size)
 
             q5_ld_plan = create_q5_ld(name)
-            tree_based_eval(q5_ld_plan, inpt, batch_size)
+            tree_based_eval(q5_ld_plan, inpt, batch_size=batch_size)
 
             q4_rd_plan = create_q4_rd(name)
-            tree_based_eval(q4_rd_plan, inpt, batch_size)
+            tree_based_eval(q4_rd_plan, inpt, batch_size=batch_size)
 
             q4_ld_plan = create_q4_ld(name)
-            tree_based_eval(q4_ld_plan, inpt, batch_size)
+            tree_based_eval(q4_ld_plan, inpt, batch_size=batch_size)
 
 
 
 if __name__ == '__main__':
-    rate_experiments()
+    rate_experiments(1)
     #selectivity_experiments()
 
     rate_experiments(100)
     #selectivity_experiments(100)
+
+    rate_experiments(1000)
