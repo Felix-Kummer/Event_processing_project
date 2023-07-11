@@ -309,10 +309,10 @@ def gen_input_stream_selectivity(events, prices, length, selectivity):
         price = random.choice(prices)
 
         if event == 'Sun':
-            price = max_price
+            price = min_price
             for prev_event in input_stream[i-200:i]:
                 if prev_event['event'] == 'IBM' and random.random() < selectivity:
-                    prev_event['price'] = min_price
+                    prev_event['price'] = max_price
 
         input_stream.append({'start_timestamp': i, 'event': event, 'price': price, 'end_timestamp': i})
 
@@ -378,7 +378,7 @@ def selectivity_experiments(batch_size=1):
     for _ in range(30):
         for sel in selectivities:
             inpt = gen_input_stream_selectivity(events, prices, length, sel)
-            basename = f"batch_{batch_size}_selectivit_experiment{str(round(sel,2))}"
+            basename = f"batch_{batch_size}_selectivity_experiment{str(round(sel,2)).replace('.', ',')}"
 
             with open(basename + "q5_rd", 'a', newline='') as f:
                 writer = csv.writer(f)
@@ -411,10 +411,10 @@ def selectivity_experiments(batch_size=1):
 
 
 if __name__ == '__main__':
-    #rate_experiments(1)
+    rate_experiments(1)
     selectivity_experiments()
 
-    #rate_experiments(100)
+    rate_experiments(100)
     selectivity_experiments(100)
 
     rate_experiments(1000)
